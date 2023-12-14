@@ -178,6 +178,22 @@ export default {
             this.comuni = [];
 
         },
+
+        pulisciForm() {
+            this.nome = '';
+            this.cognome = '';
+            this.giorno = '';
+            this.mese = '';
+            this.anno = '';
+            this.genere = [];
+            this.luogoNascita = '';
+            this.codiceFiscale = '';
+            this.nomeCitta = '';
+            this.comuni = [];
+            this.codiceCatastale = '';
+            this.carattereControllo = '';
+
+        }
     },
 
 }
@@ -185,7 +201,7 @@ export default {
 </script>
   
 <template>
-    <div>
+    <div class="card-container">
 
         <form @submit.prevent="generaCodiceFiscale">
             <label for="nome">Nome:</label>
@@ -209,38 +225,84 @@ export default {
                     <option v-for="a in anni" :key="a" :value="a">{{ a }}</option>
                 </select>
             </div>
-
             <label for="genere">Genere:</label>
-            <label>
-                <input type="checkbox" v-model="genere" value="M"> Maschile
-            </label>
-            <label>
-                <input type="checkbox" v-model="genere" value="F"> Femminile
-            </label>
-
+            <div class="d-flex ">
+                <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="genere" value="M">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Uomo</label>
+                    <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault" v-model="genere" value="F">
+                    <label class="form-check-label" for="flexSwitchCheckDefault">Donna</label>
+                </div>
+                <div v-if="codiceFiscale" class="card risultato">
+                    <h3>Codice Fiscale Generato:</h3>
+                    <h4 class="cod">{{ codiceFiscale }}</h4>
+                </div>
+            </div>
             <div>
-                <label for="nomeCitta">Nome Città:</label>
+                <label for="nomeCitta">Città Di Nascita:</label>
                 <input v-model="nomeCitta" type="text" id="nomeCitta" name="nomeCitta" @input="cercaComune">
 
-                <div v-if="comuni.length > 0" class="tendina">
+                <div v-if="comuni.length > 0" class="tendina rounded-3 bg-dark text-light">
                     <ul>
-                        <li v-for="comune in comuni" :key="comune.nome" @click="selezionaComune(comune)">
+                        <li class="" v-if="nomeCitta" v-for="comune in comuni" :key="comune.nome"
+                            @click="selezionaComune(comune)">
                             {{ comune.nome }}
                         </li>
                     </ul>
                 </div>
             </div>
-            <button type="submit">Genera Codice Fiscale</button>
+            <button class="btn btn-dark me-3" type="submit">Genera Codice Fiscale</button>
+            <button class="btn btn-dark" type="submit" @click="pulisciForm">Genera Un Nuovo Codice Fiscale</button>
+
+
         </form>
 
-        <div v-if="codiceFiscale">
-            <h3>Codice Fiscale Generato:</h3>
-            <p>{{ codiceFiscale }}</p>
-        </div>
+
     </div>
 </template>
 
 <style lang="scss">
+.card-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #378aa3;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    margin: 20px;
+    padding: 20px;
+    color: white;
+}
+
+.card {
+    background-color: #378aa3;
+    color: white;
+
+    border-radius: 10px;
+
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+
+    margin-left: 100px;
+    padding: 10px;
+}
+
+.cod {
+    background-color: #378aa3;
+    color: white;
+
+    border-radius: 10px;
+
+    box-shadow: 10px 10px 10px 10px rgba(0, 0, 0, 0.329);
+
+    margin-left: 100px;
+    padding: 10px;
+}
+
+.risultato {}
+
 .tendina {
     position: absolute;
     border: 1px solid #ccc;
@@ -261,17 +323,16 @@ export default {
 }
 
 .tendina li:hover {
-    background-color: #eee;
+    background-color: #393939;
 }
 
 body {
     font-family: Arial, sans-serif;
-    margin: 20px;
+    background: white;
 }
 
 form {
-    max-width: 400px;
-    margin: auto;
+    width: 600px;
 }
 
 label {
@@ -285,10 +346,13 @@ select {
     padding: 8px;
     margin-bottom: 16px;
     box-sizing: border-box;
+    border-radius: 30px;
+    box-shadow: 10px 10px rgba(49, 48, 48, 0.294);
 }
 
 .select-container {
     display: flex;
+    border-radius: 30px;
 }
 
 button {
