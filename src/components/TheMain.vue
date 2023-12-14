@@ -37,7 +37,7 @@ export default {
     methods: {
 
         ottieniConsonanti(parola) {
-            return parola.replace(/[aeiouAEIOU]/g, ''); // Rimuovi le vocali
+            return parola.replace(/[aeiouAEIOU]/g, ''); // Rimuovo le vocali
         },
         ottieniVocali(parola) {
             return (parola.match(/[aeiouAEIOU]/g) || []).join('');
@@ -126,15 +126,15 @@ export default {
             console.log(nomeVocali[0])
 
             //mese
-            // Definisci un array di lettere
+            // Definisco un array di lettere
             const lettereMesi = ['A', 'B', 'C', 'D', 'E', 'H', 'L', 'M', 'P', 'R', 'S', 'T'];
 
-            let indiceMese = this.mese - 1; // Sottrai 1 perché gli array sono zero-based
+            let indiceMese = this.mese - 1; // Sottraggo 1 per l'array
 
             // Associa la lettera del mese selezionato
             let letteraMese = lettereMesi[indiceMese];
 
-            // Ora puoi utilizzare letteraMese come desiderato
+
             console.log(letteraMese);
 
             //giorno nascita e sesso
@@ -153,7 +153,7 @@ export default {
             let codiceFiscaleBase = cognomeCodice.slice(0, 3).toUpperCase() + nomeCodice.slice(0, 3).toUpperCase() + annoCodice + letteraMese + giornoCodice + this.codiceCatastale;
             let carattereControllo = this.calcolaCarattereControllo(codiceFiscaleBase);
 
-            // Aggiungi il carattere di controllo al codice fiscale base
+            // Aggiungo il carattere di controllo al codice fiscale base
             let codiceFiscaleGenerato = codiceFiscaleBase + carattereControllo;
             this.codiceFiscale = codiceFiscaleGenerato;
         },
@@ -271,12 +271,12 @@ body {
 
 form {
     max-width: 400px;
-    margin: auto
+    margin: auto;
 }
 
 label {
     display: block;
-    margin-bottom: 8px
+    margin-bottom: 8px;
 }
 
 input,
@@ -284,11 +284,11 @@ select {
     width: 100%;
     padding: 8px;
     margin-bottom: 16px;
-    box-sizing: border-box
+    box-sizing: border-box;
 }
 
 .select-container {
-    display: flex
+    display: flex;
 }
 
 button {
@@ -297,11 +297,28 @@ button {
     padding: 10px 15px;
     border: none;
     border-radius: 4px;
-    cursor: pointer
+    cursor: pointer;
 }
 
 button:hover {
-    background-color: #45a049
+    background-color: #45a049;
+}
+
+@media screen and (max-width: 600px) {
+    form {
+        max-width: 100%;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .select-container {
+        flex-direction: column;
+    }
+
+    select {
+        margin-bottom: 8px;
+    }
 }
 </style>
+
   
