@@ -14,6 +14,8 @@ export default {
             codiceFiscale: '',
             nomeCitta: '',
             comuni: [],
+            codiceCatastale: '',
+            carattereControllo: '',
         };
     },
     computed: {
@@ -40,6 +42,47 @@ export default {
         ottieniVocali(parola) {
             return (parola.match(/[aeiouAEIOU]/g) || []).join('');
         },
+
+
+
+        calcolaCarattereControllo(codiceFiscaleBase) {
+            const caratteriDispari = {
+                '0': 1, '1': 0, '2': 5, '3': 7, '4': 9, '5': 13, '6': 15, '7': 17, '8': 19, '9': 21,
+                'A': 1, 'B': 0, 'C': 5, 'D': 7, 'E': 9, 'F': 13, 'G': 15, 'H': 17, 'I': 19, 'J': 21,
+                'K': 2, 'L': 4, 'M': 18, 'N': 20, 'O': 11, 'P': 3, 'Q': 6, 'R': 8, 'S': 12, 'T': 14,
+                'U': 16, 'V': 10, 'W': 22, 'X': 25, 'Y': 24, 'Z': 23
+            };
+
+            const caratteriPari = {
+                '0': 0, '1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, '8': 8, '9': 9,
+                'A': 0, 'B': 1, 'C': 2, 'D': 3, 'E': 4, 'F': 5, 'G': 6, 'H': 7, 'I': 8, 'J': 9,
+                'K': 10, 'L': 11, 'M': 12, 'N': 13, 'O': 14, 'P': 15, 'Q': 16, 'R': 17, 'S': 18, 'T': 19,
+                'U': 20, 'V': 21, 'W': 22, 'X': 23, 'Y': 24, 'Z': 25
+            };
+
+            let sommaDispari = 0;
+            let sommaPari = 0;
+
+            for (let i = 0; i < codiceFiscaleBase.length; i++) {
+                const carattere = codiceFiscaleBase.charAt(i);
+                if (i % 2 === 0) {  // Cambiato da !== a ===
+                    sommaDispari += caratteriDispari[carattere];
+                } else {
+                    sommaPari += caratteriPari[carattere];
+                }
+            }
+
+            const sommaTotale = (sommaDispari + sommaPari) % 26;
+
+            const caratteriLista = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
+            const letteraControllo = caratteriLista[sommaTotale];
+
+            return letteraControllo;
+        }
+
+
+        ,
+
 
         generaCodiceFiscale() {
             let nomeCodice = '';
@@ -86,7 +129,6 @@ export default {
             // Definisci un array di lettere
             const lettereMesi = ['A', 'B', 'C', 'D', 'E', 'H', 'L', 'M', 'P', 'R', 'S', 'T'];
 
-            // Supponiamo che il valore di this.mese sia l'indice del mese selezionato (1 per gennaio, 2 per febbraio, ecc.)
             let indiceMese = this.mese - 1; // Sottrai 1 perché gli array sono zero-based
 
             // Associa la lettera del mese selezionato
@@ -105,8 +147,14 @@ export default {
                 giornoCodice = parseInt(this.giorno) + 40;
             }
             console.log(giornoCodice)
-            let codiceFiscaleGenerato = cognomeCodice.slice(0, 3).toUpperCase() + nomeCodice.slice(0, 3).toUpperCase() + annoCodice + letteraMese + giornoCodice;
 
+
+            // Calcola il carattere di controllo
+            let codiceFiscaleBase = cognomeCodice.slice(0, 3).toUpperCase() + nomeCodice.slice(0, 3).toUpperCase() + annoCodice + letteraMese + giornoCodice + this.codiceCatastale;
+            let carattereControllo = this.calcolaCarattereControllo(codiceFiscaleBase);
+
+            // Aggiungi il carattere di controllo al codice fiscale base
+            let codiceFiscaleGenerato = codiceFiscaleBase + carattereControllo;
             this.codiceFiscale = codiceFiscaleGenerato;
         },
 
@@ -114,13 +162,21 @@ export default {
             try {
                 const response = await axios.get(`https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni?nome=${this.nomeCitta}`);
                 this.comuni = response.data;
+                this.codiceCatastale = response.data[0]?.codiceCatastale || 'nessun comune trovato';
+                console.log(this.codiceCatastale)
+
+
+
             } catch (error) {
                 console.error('Errore durante la ricerca del comune:', error);
             }
         },
         selezionaComune(comune) {
-            this.nomeCitta = comune;
+            this.nomeCitta = comune.nome;
+            this.codiceCatastale = comune.codiceCatastale;
+            console.log(this.codiceCatastale);
             this.comuni = [];
+
         },
     },
 
@@ -168,7 +224,7 @@ export default {
 
                 <div v-if="comuni.length > 0" class="tendina">
                     <ul>
-                        <li v-for="comune in comuni" :key="comune.nome" @click="selezionaComune(comune.nome)">
+                        <li v-for="comune in comuni" :key="comune.nome" @click="selezionaComune(comune)">
                             {{ comune.nome }}
                         </li>
                     </ul>
