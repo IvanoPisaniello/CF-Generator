@@ -9,7 +9,7 @@ export default {
 
 <template>
     <header class="d-flex justify-content-center align-items-center my-header">
-        <h1 class="text-light"> <strong> CF Generator </strong></h1>
+        <h1 class="text-light"> <strong> CF GENERATOR </strong></h1>
     </header>
 </template>
 <style lang="scss" scoped>
